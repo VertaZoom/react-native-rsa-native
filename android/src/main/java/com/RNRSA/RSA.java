@@ -117,16 +117,16 @@ public class RSA {
 
     // Base64 input
     public String encrypt64(String b64Message) throws NoSuchAlgorithmException, InvalidKeySpecException, IllegalBlockSizeException, BadPaddingException, NoSuchPaddingException, InvalidKeyException {
-        byte[] data = Base64.decode(b64Message, Base64.DEFAULT);
+        byte[] data = Base64.decode(b64Message, Base64.NO_WRAP);
         byte[] cipherBytes = encrypt(data);
-        return Base64.encodeToString(cipherBytes, Base64.DEFAULT);
+        return Base64.encodeToString(cipherBytes, Base64.NO_WRAP);
     }
 
     // UTF-8 input
     public String encrypt(String message) throws NoSuchAlgorithmException, InvalidKeySpecException, IllegalBlockSizeException, BadPaddingException, NoSuchPaddingException, InvalidKeyException {
         byte[] data = message.getBytes(UTF_8);
         byte[] cipherBytes = encrypt(data);
-        return Base64.encodeToString(cipherBytes, Base64.DEFAULT);
+        return Base64.encodeToString(cipherBytes, Base64.NO_WRAP);
     }
 
     private byte[] decrypt(byte[] cipherBytes) throws NoSuchAlgorithmException, InvalidKeySpecException, IllegalBlockSizeException, BadPaddingException, NoSuchPaddingException, InvalidKeyException {
@@ -139,29 +139,29 @@ public class RSA {
 
     // UTF-8 input
     public String decrypt(String message) throws NoSuchAlgorithmException, InvalidKeySpecException, IllegalBlockSizeException, BadPaddingException, NoSuchPaddingException, InvalidKeyException {
-        byte[] cipherBytes = Base64.decode(message, Base64.DEFAULT);
+        byte[] cipherBytes = Base64.decode(message, Base64.NO_WRAP);
         byte[] data = decrypt(cipherBytes);
         return new String(data, UTF_8);
     }
 
     // Base64 input
     public String decrypt64(String b64message) throws NoSuchAlgorithmException, InvalidKeySpecException, IllegalBlockSizeException, BadPaddingException, NoSuchPaddingException, InvalidKeyException {
-        byte[] cipherBytes = Base64.decode(b64message, Base64.DEFAULT);
+        byte[] cipherBytes = Base64.decode(b64message, Base64.NO_WRAP);
         byte[] data = decrypt(cipherBytes);
-        return Base64.encodeToString(data, Base64.DEFAULT);
+        return Base64.encodeToString(data, Base64.NO_WRAP);
     }
 
     private String sign(byte[] messageBytes) throws NoSuchAlgorithmException, InvalidKeySpecException, IllegalBlockSizeException, BadPaddingException, NoSuchPaddingException, InvalidKeyException, SignatureException {
-        Signature privateSignature = Signature.getInstance("SHA512withRSA");
+        Signature privateSignature = Signature.getInstance("SHA256withRSA");
         privateSignature.initSign(this.privateKey);
         privateSignature.update(messageBytes);
         byte[] signature = privateSignature.sign();
-        return Base64.encodeToString(signature, Base64.DEFAULT);
+        return Base64.encodeToString(signature, Base64.NO_WRAP);
     }
 
     // b64 message
     public String sign64(String b64message) throws NoSuchAlgorithmException, InvalidKeySpecException, IllegalBlockSizeException, BadPaddingException, NoSuchPaddingException, InvalidKeyException, SignatureException {
-        byte[] messageBytes = Base64.decode(b64message, Base64.DEFAULT);
+        byte[] messageBytes = Base64.decode(b64message, Base64.NO_WRAP);
         return sign(messageBytes);
     }
 
@@ -172,7 +172,7 @@ public class RSA {
     }
 
     private boolean verify(byte[] signatureBytes, byte[] messageBytes) throws NoSuchAlgorithmException, InvalidKeySpecException, IllegalBlockSizeException, BadPaddingException, NoSuchPaddingException, InvalidKeyException, SignatureException {
-        Signature publicSignature = Signature.getInstance("SHA512withRSA");
+        Signature publicSignature = Signature.getInstance("SHA256withRSA");
         publicSignature.initVerify(this.publicKey);
         publicSignature.update(messageBytes);
         return publicSignature.verify(signatureBytes);
@@ -180,7 +180,7 @@ public class RSA {
 
     // b64 message
     public boolean verify64(String signature, String message) throws NoSuchAlgorithmException, InvalidKeySpecException, IllegalBlockSizeException, BadPaddingException, NoSuchPaddingException, InvalidKeyException, SignatureException {
-        Signature publicSignature = Signature.getInstance("SHA512withRSA");
+        Signature publicSignature = Signature.getInstance("SHA256withRSA");
         publicSignature.initVerify(this.publicKey);
         byte[] messageBytes = Base64.decode(message, Base64.DEFAULT);
         byte[] signatureBytes = Base64.decode(signature, Base64.DEFAULT);
@@ -189,7 +189,7 @@ public class RSA {
 
     // utf-8 message
     public boolean verify(String signature, String message) throws NoSuchAlgorithmException, InvalidKeySpecException, IllegalBlockSizeException, BadPaddingException, NoSuchPaddingException, InvalidKeyException, SignatureException {
-        Signature publicSignature = Signature.getInstance("SHA512withRSA");
+        Signature publicSignature = Signature.getInstance("SHA256withRSA");
         publicSignature.initVerify(this.publicKey);
         byte[] messageBytes = message.getBytes(UTF_8);
         byte[] signatureBytes = Base64.decode(signature, Base64.DEFAULT);
@@ -285,7 +285,7 @@ public class RSA {
                     keyTag,
                     PURPOSE_ENCRYPT | PURPOSE_DECRYPT | PURPOSE_SIGN | PURPOSE_VERIFY
                 )
-                .setDigests(KeyProperties.DIGEST_SHA512)
+                .setDigests(KeyProperties.DIGEST_SHA256)
                 .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
                 .setSignaturePaddings(KeyProperties.SIGNATURE_PADDING_RSA_PKCS1)
                 .build()
